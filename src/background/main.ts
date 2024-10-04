@@ -1,5 +1,5 @@
-import { sendMessage, onMessage } from 'webext-bridge'
-import type { Tabs } from 'webextension-polyfill'
+import { sendMessage } from 'webext-bridge/background'
+import { Tabs } from 'webextension-polyfill'
 
 // only on dev mode
 if (import.meta.hot) {
@@ -10,47 +10,37 @@ if (import.meta.hot) {
 }
 
 browser.runtime.onInstalled.addListener((): void => {
-  // eslint-disable-next-line no-console
   console.log('Extension installed')
 })
 
-let previousTabId = 0
+console.log('Hello from background script')
 
-// communication example: send previous tab title from background page
-// see shim.d.ts for type declaration
-browser.tabs.onActivated.addListener(async ({ tabId }) => {
-  if (!previousTabId) {
-    previousTabId = tabId
-    return
-  }
+browser.commands.onCommand.addListener(async (cmd) => {
+  const tab = await browser.tabs
+    .query({ active: true, currentWindow: true })
+    .then((tabs) => tabs[0])
+  console.debug('command received', cmd, tab)
+  const resp = getResponse(cmd, tab)
+  if (!resp || !tab) return
 
-  let tab: Tabs.Tab
-
-  try {
-    tab = await browser.tabs.get(previousTabId)
-    previousTabId = tabId
-  } catch {
-    return
-  }
-
-  // eslint-disable-next-line no-console
-  console.log('previous tab', tab)
-  sendMessage(
-    'tab-prev',
-    { title: tab.title },
-    { context: 'content-script', tabId },
-  )
+  console.debug('sending message', resp, 'to tab', tab.id)
+  return sendMessage(resp.cmd, resp.payload!, {
+    context: 'content-script',
+    tabId: tab.id!,
+  })
 })
 
-onMessage('get-current-tab', async () => {
-  try {
-    const tab = await browser.tabs.get(previousTabId)
-    return {
-      title: tab?.title,
-    }
-  } catch {
-    return {
-      title: undefined,
-    }
+function getResponse(msg: string, tab: Tabs.Tab) {
+  switch (msg) {
+    case 'copy-tab-url':
+      // copy tab url to clipboard
+      return { cmd: 'copy-text', payload: tab?.url }
+    case 'copy-tab-markdown':
+      // copy tab url and title in markdown format
+      return {
+        cmd: 'copy-text',
+        payload: `[${tab?.title}](${tab?.url})`,
+      }
   }
-})
+  return null
+}

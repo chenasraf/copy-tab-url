@@ -32,7 +32,15 @@ export async function getManifest() {
       48: './assets/icon-512.png',
       128: './assets/icon-512.png',
     },
-    permissions: ['tabs', 'storage', 'activeTab', 'http://*/', 'https://*/'],
+    permissions: [
+      // 'host',
+      'tabs',
+      'storage',
+      'activeTab',
+      'clipboardWrite',
+      'http://*/',
+      'https://*/',
+    ],
     content_scripts: [
       {
         matches: ['http://*/*', 'https://*/*'],
@@ -40,6 +48,22 @@ export async function getManifest() {
       },
     ],
     web_accessible_resources: ['dist/contentScripts/style.css'],
+    commands: {
+      'copy-tab-url': {
+        suggested_key: {
+          default: 'Ctrl+Shift+U',
+          mac: 'Command+Shift+U',
+        },
+        description: 'Copy the current tab URL',
+      },
+      'copy-tab-markdown': {
+        suggested_key: {
+          default: 'Ctrl+Shift+M',
+          mac: 'Command+Shift+M',
+        },
+        description: 'Copy the current tab URL and title in Markdown format',
+      },
+    },
   }
 
   if (isDev) {
@@ -49,13 +73,10 @@ export async function getManifest() {
     delete manifest.content_scripts
     manifest.permissions?.push('webNavigation')
 
-    const preambleCodeHash = crypto
-      .createHash('sha256')
-      .update(preambleCode)
-      .digest('base64')
+    const preambleCodeHash = crypto.createHash('sha256').update(preambleCode).digest('base64')
 
     // this is required on dev for Vite script to load
-    manifest.content_security_policy = `script-src \'self\' 'sha256-${preambleCodeHash}' http://localhost:${port}; object-src \'self\'`
+    manifest.content_security_policy = `script-src 'self' 'sha256-${preambleCodeHash}' http://localhost:${port}; object-src 'self'`
   }
 
   return manifest
