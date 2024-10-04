@@ -1,7 +1,7 @@
 import { dirname, relative } from 'path'
-import { readFile } from 'fs'
+import { readFile } from 'fs/promises'
 import autoImport from 'unplugin-auto-import/vite'
-import { r, port, isDev, fastRefresh } from './scripts/utils'
+import { r, port, isDev } from './scripts/utils'
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
 import type { UserConfig } from 'vite'
@@ -17,7 +17,8 @@ export const sharedConfig: UserConfig = {
     __DEV__: isDev,
   },
   plugins: [
-    react({ fastRefresh }),
+    // react({ fastRefresh }),
+    react(),
     autoImport({
       include: [/\.[tj]sx?$/],
       imports: [
@@ -36,10 +37,7 @@ export const sharedConfig: UserConfig = {
       enforce: 'post',
       apply: 'build',
       transformIndexHtml(html, { path }) {
-        return html.replace(
-          /"\/assets\//g,
-          `"${relative(dirname(path), '/assets')}/`,
-        )
+        return html.replace(/"\/assets\//g, `"${relative(dirname(path), '/assets')}/`)
       },
     },
   ],
@@ -49,13 +47,9 @@ export const sharedConfig: UserConfig = {
         {
           name: 'load-js-files-as-jsx',
           setup(build) {
-            build.onLoad({ filter: /src\\\.*\.js/ }, async args => ({
+            build.onLoad({ filter: /src\\\.*\.js/ }, async (args) => ({
               loader: 'jsx',
-              contents: void (await readFile(
-                args.path,
-                { encoding: 'utf8' },
-                () => {},
-              )),
+              contents: await readFile(args.path, { encoding: 'utf8' }),
             }))
           },
         },

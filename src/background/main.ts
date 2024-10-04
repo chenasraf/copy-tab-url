@@ -1,3 +1,4 @@
+import logger from '@/common/logger'
 import { sendMessage } from 'webext-bridge/background'
 import { Tabs } from 'webextension-polyfill'
 
@@ -10,20 +11,20 @@ if (import.meta.hot) {
 }
 
 browser.runtime.onInstalled.addListener((): void => {
-  console.log('Extension installed')
+  logger.log('Extension installed')
 })
 
-console.log('Hello from background script')
+logger.log('Hello from background script')
 
 browser.commands.onCommand.addListener(async (cmd) => {
   const tab = await browser.tabs
     .query({ active: true, currentWindow: true })
     .then((tabs) => tabs[0])
-  console.debug('command received', cmd, tab)
+  logger.debug('command received', cmd, tab)
   const resp = getResponse(cmd, tab)
   if (!resp || !tab) return
 
-  console.debug('sending message', resp, 'to tab', tab.id)
+  logger.debug('sending message', resp, 'to tab', tab.id)
   return sendMessage(resp.cmd, resp.payload!, {
     context: 'content-script',
     tabId: tab.id!,

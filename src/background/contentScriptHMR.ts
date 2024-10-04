@@ -1,3 +1,4 @@
+import logger from '@/common/logger'
 import { isFirefox, isForbiddenUrl } from '@/env'
 
 // Firefox fetch files from cache instead of reloading changes from disk,
@@ -8,7 +9,7 @@ browser.webNavigation.onCommitted.addListener(async ({ tabId, frameId, url }) =>
 
   if (isForbiddenUrl(url)) return
 
-  console.debug('Injecting', `${isFirefox ? '' : './'}dist/contentScripts/index.global.js`)
+  logger.debug('Injecting', `${isFirefox ? '' : './'}dist/contentScripts/index.global.js`)
 
   // inject the latest scripts
   try {
@@ -17,6 +18,6 @@ browser.webNavigation.onCommitted.addListener(async ({ tabId, frameId, url }) =>
       runAt: 'document_end',
     })
   } catch (error) {
-    console.error(error)
+    logger.error(error)
   }
 })
