@@ -3,12 +3,12 @@
 Firefox extension that lets you copy current tab URL to clipboard. Simple but effective, and makes
 sharing and saving links way easier.
 
-## Features
+## ⚡️ Features
 
 - Copy Tab URL with shortcut
 - Copy Tab URL+Title in Markdown format with another shortcut
 
-## Usage
+## ℹ️ Usage
 
 ### Default Shortcuts
 
@@ -26,7 +26,7 @@ Manage Extension Shortcuts
 - Copying tab Markdown will copy the URL in Markdown format with the title, like so:
   `[Example Site](https://example.com)`
 
-## Development
+## 💻 Development
 
 ### Dev tools
 
@@ -69,13 +69,13 @@ pnpm build
 And then pack files under `extension`, you can upload `extension.crx` or `extension.xpi` to
 appropriate extension store.
 
-## Credits
+## 👤 Credits
 
 This template codes are based on
 [vite-react-webext](https://github.com/YangJonghun/vite-react-webext), which is based on
 [Anthony Fu](https://github.com/antfu)'s [vitesse-webext](https://github.com/antfu/vitesse-webext).
 
-## Contributing
+## 💪🏼 Contributing
 
 I am developing this package on my free time, so any support, whether code, issues, or just stars is
 very helpful to sustaining its life. If you are feeling incredibly generous and would like to donate
