@@ -1,7 +1,7 @@
 import { dirname, relative } from 'path'
 import { readFile } from 'fs/promises'
 import autoImport from 'unplugin-auto-import/vite'
-import { r, port, isDev } from './scripts/utils'
+import { r, port, isDev, fastRefresh } from './scripts/utils'
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
 import type { UserConfig } from 'vite'
@@ -17,8 +17,7 @@ export const sharedConfig: UserConfig = {
     __DEV__: isDev,
   },
   plugins: [
-    // react({ fastRefresh }),
-    react(),
+    react({ fastRefresh } as never),
     autoImport({
       include: [/\.[tj]sx?$/],
       imports: [

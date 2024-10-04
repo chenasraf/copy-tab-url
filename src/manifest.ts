@@ -7,8 +7,6 @@ import type { Manifest } from 'webextension-polyfill'
 export async function getManifest() {
   const pkg = (await fs.readJSON(r('package.json'))) as typeof PkgType
 
-  // update this file to update this manifest.json
-  // can also be conditional based on your need
   const manifest: Manifest.WebExtensionManifest = {
     manifest_version: 2,
     name: pkg.displayName || pkg.name,
@@ -32,7 +30,6 @@ export async function getManifest() {
       48: './assets/icon-512.png',
       128: './assets/icon-512.png',
     },
-    // host_permissions: ['<all_urls>'],
     permissions: ['tabs', 'storage', 'activeTab', 'clipboardWrite', 'http://*/', 'https://*/'],
     content_scripts: [
       {
@@ -64,7 +61,7 @@ export async function getManifest() {
     // we use a background script to always inject the latest version
     // see src/background/contentScriptHMR.ts
     delete manifest.content_scripts
-    manifest.permissions?.push('webNavigation', 'host')
+    manifest.permissions?.push('webNavigation')
 
     const preambleCodeHash = crypto.createHash('sha256').update(preambleCode).digest('base64')
 

@@ -5,7 +5,10 @@ import { onMessage } from 'webext-bridge/content-script'
   // so we wrap the content script in an IIFE
   // prettier doesn't like this.
   ; (() => {
+    let toastTimeout1: NodeJS.Timeout, toastTimeout2: NodeJS.Timeout
     logger.info('[vite-react-webext] Hello world from content script')
+
+    injectCSS()
 
     onMessage('copy-text', (payload) => {
       logger.debug('copy-text', payload)
@@ -29,16 +32,7 @@ import { onMessage } from 'webext-bridge/content-script'
       container.style.perspective = '100px'
 
       const toast = document.createElement('div')
-      toast.dataset.taburlToast = 'taburlToast'
-      toast.style.background = 'rgb(24, 24, 24)'
-      toast.style.color = 'rgb(255, 255, 255)'
-      toast.style.fontFamily = 'Helvetica, Arial, sans-serif'
-      toast.style.fontSize = '14px'
-      toast.style.padding = '12px'
-      toast.style.borderRadius = '1em'
-      toast.style.transition = 'all 150ms ease-in-out'
-      toast.style.opacity = '0'
-      toast.style.transform = 'rotate3d(0, 3, 1, 10deg) translateY(-10px)'
+      toast.dataset.taburlToast = 'taburl-toast'
 
       toast.innerText = 'URL Copied to Clipboard'
 
@@ -47,11 +41,13 @@ import { onMessage } from 'webext-bridge/content-script'
 
       logger.debug('Toast injected')
 
-      setTimeout(() => {
-        toast.style.opacity = '1'
-        toast.style.transform = ''
+      clearTimeout(toastTimeout1)
+      clearTimeout(toastTimeout2)
 
-        setTimeout(() => {
+      toastTimeout1 = setTimeout(() => {
+        toast.classList.add('show')
+
+        toastTimeout2 = setTimeout(() => {
           dismissToast()
         }, 3000)
       }, 10)
@@ -60,13 +56,40 @@ import { onMessage } from 'webext-bridge/content-script'
     function dismissToast() {
       const toast = document.querySelector('[data-taburl-toast]') as HTMLDivElement
       const container = toast?.parentElement
+      clearTimeout(toastTimeout1)
+      clearTimeout(toastTimeout2)
+
       if (!toast || !container) return
       logger.debug('Dismissing toast')
-      toast.style.opacity = '0'
-      toast.style.transform = 'rotate3d(0, 3, 1, 10deg) translateY(-10px)'
-      setTimeout(() => {
+      toast.classList.remove('show')
+      toastTimeout1 = setTimeout(() => {
         container.remove()
         logger.debug('Toast dismissed')
       }, 150)
+    }
+
+    function injectCSS() {
+      if (document.getElementById('taburl-toast-style')) return
+      const style = document.createElement('style')
+      style.id = 'taburl-toast-style'
+      style.innerHTML = `
+        [data-taburl-toast] {
+          background: rgb(24, 24, 24);
+          color: rgb(255, 255, 255);
+          font-family: Helvetica, Arial, sans-serif;
+          font-size: 14px;
+          padding: 12px;
+          border-radius: 1em;
+          transition: all 150ms ease-in-out;
+          opacity: 0;
+          transform: rotate3d(0, 3, 1, 10deg) translateY(-10px);
+        }
+
+        [data-taburl-toast].show {
+          opacity: 1;
+          transform: none;
+        }
+      `
+      document.head.appendChild(style)
     }
   })()
