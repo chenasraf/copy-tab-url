@@ -1,5 +1,5 @@
 {
-  "name": "vite-react-webext",
+  "name": "copy-tab-url-extension",
   "displayName": "Copy Tab URL",
   "version": "0.0.1",
   "type": "module",
