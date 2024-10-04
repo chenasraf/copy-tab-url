@@ -3,7 +3,7 @@ type ConsoleFunctions = {
   [K in keyof Console]: Console[K] extends (...args: infer A) => void ? A : never
 }
 export class Logger {
-  enabled = true
+  enabled = import.meta.env.DEV
 
   use(method: keyof ConsoleFunctions, ...args: unknown[]) {
     if (!this.enabled) return

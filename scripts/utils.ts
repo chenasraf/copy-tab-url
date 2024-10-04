@@ -10,7 +10,7 @@ export const fastRefresh = true
 
 export const port = parseInt(env.PORT || '') || 3303
 export const r = (...args: string[]) => resolve(__dirname, '..', ...args)
-export const isDev = env.NODE_ENV !== 'production'
+export const isDev = env.NODE_ENV === 'development'
 export const preambleCode = react.preambleCode.replace('__BASE__', '/')
 
 export function log(name: string, message: string) {

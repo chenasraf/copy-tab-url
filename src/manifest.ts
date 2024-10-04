@@ -32,15 +32,8 @@ export async function getManifest() {
       48: './assets/icon-512.png',
       128: './assets/icon-512.png',
     },
-    permissions: [
-      // 'host',
-      'tabs',
-      'storage',
-      'activeTab',
-      'clipboardWrite',
-      'http://*/',
-      'https://*/',
-    ],
+    // host_permissions: ['<all_urls>'],
+    permissions: ['tabs', 'storage', 'activeTab', 'clipboardWrite', 'http://*/', 'https://*/'],
     content_scripts: [
       {
         matches: ['http://*/*', 'https://*/*'],
@@ -71,7 +64,7 @@ export async function getManifest() {
     // we use a background script to always inject the latest version
     // see src/background/contentScriptHMR.ts
     delete manifest.content_scripts
-    manifest.permissions?.push('webNavigation')
+    manifest.permissions?.push('webNavigation', 'host')
 
     const preambleCodeHash = crypto.createHash('sha256').update(preambleCode).digest('base64')
 
