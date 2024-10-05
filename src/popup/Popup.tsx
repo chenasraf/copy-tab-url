@@ -1,40 +1,35 @@
-import logo from '@/assets/logo.svg'
-import { useStorageLocal } from '@/hooks/useStorageLocal'
-import { useState } from 'react'
+// import { useStorageLocal } from '@/hooks/useStorageLocal'
+import { sendMessage } from 'webext-bridge/popup'
 import './Popup.css'
 
 const Popup = () => {
-  const [count, setCount] = useState(0)
-  const [val] = useStorageLocal<string>({ key: 'webext-demo' })
+  // const [val] = useStorageLocal<string>({ key: 'copy-markdown-format' })
 
   const openOptionsPage = () => {
     browser.runtime.openOptionsPage()
   }
 
+  const send = (cmd: string) => {
+    sendMessage(cmd, {})
+  }
+
   return (
     <div className="App">
       <header className="App-header">
-        <img
-          src={logo}
-          className="App-logo"
-          alt="logo"
-          onClick={openOptionsPage}
-        />
-        <p>Hello Vite + React!</p>
+        <p>Copy Tab URL</p>
         <p>
-          <button type="button" onClick={() => setCount(count => count + 1)}>
-            count is: {count}
+          <button type="button" onClick={() => send('copy-tab-url')}>
+            Copy Tab URL
           </button>
         </p>
         <p>
-          Edit <code>App.tsx</code> and save to test HMR updates.
-        </p>
-        <p>
-          Storage: <b>{val ?? 'not exist'}</b>
+          <button type="button" onClick={() => send('copy-tab-markdown')}>
+            Copy Tab Markdown
+          </button>
         </p>
         <p>
           <button type="button" onClick={openOptionsPage}>
-            open option!
+            Options
           </button>
         </p>
         <p>
@@ -42,7 +37,8 @@ const Popup = () => {
             className="App-link"
             href="https://reactjs.org"
             target="_blank"
-            rel="noopener noreferrer">
+            rel="noopener noreferrer"
+          >
             Learn React
           </a>
           {' | '}
@@ -50,7 +46,8 @@ const Popup = () => {
             className="App-link"
             href="https://vitejs.dev/guide/features.html"
             target="_blank"
-            rel="noopener noreferrer">
+            rel="noopener noreferrer"
+          >
             Vite Docs
           </a>
         </p>

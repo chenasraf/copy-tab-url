@@ -1,5 +1,6 @@
 import logger from '@/common/logger'
-import { sendMessage } from 'webext-bridge/background'
+import { BridgeMessage } from 'webext-bridge'
+import { sendMessage, onMessage } from 'webext-bridge/background'
 import { Tabs } from 'webextension-polyfill'
 
 // only on dev mode
@@ -16,10 +17,12 @@ browser.runtime.onInstalled.addListener((): void => {
 
 logger.log('Hello from background script')
 
+async function getCurrentTab() {
+  return browser.tabs.query({ active: true, currentWindow: true }).then((tabs) => tabs[0])
+}
+
 browser.commands.onCommand.addListener(async (cmd) => {
-  const tab = await browser.tabs
-    .query({ active: true, currentWindow: true })
-    .then((tabs) => tabs[0])
+  const tab = await getCurrentTab()
   logger.debug('command received', cmd, tab)
   const resp = getResponse(cmd, tab)
   if (!resp || !tab) return
@@ -30,6 +33,22 @@ browser.commands.onCommand.addListener(async (cmd) => {
     tabId: tab.id!,
   })
 })
+
+onMessage('copy-tab-url', responder('copy-tab-url'))
+onMessage('copy-tab-markdown', responder('copy-tab-markdown'))
+
+function responder(cmd: string) {
+  return async (payload: BridgeMessage<string>) => {
+    logger.debug('copy-tab-url', payload)
+    const tab = await getCurrentTab()
+    const resp = getResponse(cmd, tab)
+    if (!resp || !tab) return
+    return sendMessage(resp.cmd, resp.payload!, {
+      context: 'content-script',
+      tabId: tab.id!,
+    })
+  }
+}
 
 function getResponse(msg: string, tab: Tabs.Tab) {
   switch (msg) {
