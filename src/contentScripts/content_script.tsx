@@ -1,12 +1,15 @@
 import logger from '@/common/logger'
 import { onMessage } from 'webext-bridge/content-script'
+import '../styles'
 
 let toastTimeout1: NodeJS.Timeout, toastTimeout2: NodeJS.Timeout
+let shadowDOM: ShadowRoot
+let root: HTMLDivElement
 
 export function contentScriptMain() {
   logger.info('[vite-react-webext] Hello world from content script')
 
-  injectCSS()
+  injectShadowRoot()
 
   onMessage('copy-tab-url', (payload) => {
     logger.debug('copy-text', payload)
@@ -26,22 +29,31 @@ export function contentScriptMain() {
   })
 }
 
+async function injectShadowRoot() {
+  const container = document.createElement('div')
+  root = document.createElement('div')
+  const styleEl = document.createElement('link')
+  shadowDOM = container.attachShadow?.({ mode: __DEV__ ? 'open' : 'closed' }) || container
+  styleEl.setAttribute('rel', 'stylesheet')
+  styleEl.setAttribute('href', browser.runtime.getURL('dist/contentScripts/style.css'))
+  shadowDOM.appendChild(styleEl)
+  shadowDOM.appendChild(root)
+  document.body.appendChild(container)
+}
+
 async function toast(text: string) {
   await dismissToast()
   const container = document.createElement('div')
-  container.style.position = 'fixed'
-  container.style.top = '10px'
-  container.style.right = '10px'
-  container.style.zIndex = '999999'
-  container.style.perspective = '100px'
+  container.classList.add('container')
 
   const toast = document.createElement('div')
+  toast.classList.add('toast')
   toast.dataset.taburlToast = 'taburl-toast'
 
   toast.innerText = text
 
   container.appendChild(toast)
-  document.body.appendChild(container)
+  root.appendChild(container)
 
   logger.debug('Toast injected')
 
@@ -60,7 +72,7 @@ async function toast(text: string) {
 }
 
 async function dismissToast() {
-  const toast = document.querySelector('[data-taburl-toast]') as HTMLDivElement
+  const toast = root.querySelector('[data-taburl-toast]') as HTMLDivElement
   const container = toast?.parentElement
   clearTimeout(toastTimeout1)
   clearTimeout(toastTimeout2)
@@ -75,29 +87,4 @@ async function dismissToast() {
       resolve(undefined)
     }, 150)
   })
-}
-
-function injectCSS() {
-  if (document.getElementById('taburl-toast-style')) return
-  const style = document.createElement('style')
-  style.id = 'taburl-toast-style'
-  style.innerHTML = `
-        [data-taburl-toast] {
-          background: rgb(24, 24, 24);
-          color: rgb(255, 255, 255);
-          font-family: Helvetica, Arial, sans-serif;
-          font-size: 14px;
-          padding: 12px;
-          border-radius: 1em;
-          transition: all 150ms ease-in-out;
-          opacity: 0;
-          transform: rotate3d(0, 3, 1, 10deg) translateY(-10px);
-        }
-
-        [data-taburl-toast].show {
-          opacity: 1;
-          transform: none;
-        }
-      `
-  document.head.appendChild(style)
 }
