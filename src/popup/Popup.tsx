@@ -11,47 +11,30 @@ const Popup = () => {
 
   const send = (cmd: string) => {
     sendMessage(cmd, {})
+    window.close()
   }
 
   return (
-    <div className="App">
-      <header className="App-header">
+    <div className="popup">
+      <header className="popup-header">
         <p>Copy Tab URL</p>
-        <p>
-          <button type="button" onClick={() => send('copy-tab-url')}>
-            Copy Tab URL
-          </button>
-        </p>
-        <p>
-          <button type="button" onClick={() => send('copy-tab-markdown')}>
-            Copy Tab Markdown
-          </button>
-        </p>
-        <p>
-          <button type="button" onClick={openOptionsPage}>
-            Options
-          </button>
-        </p>
-        <p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-          {' | '}
-          <a
-            className="App-link"
-            href="https://vitejs.dev/guide/features.html"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Vite Docs
-          </a>
-        </p>
       </header>
+
+      <main className="button-group">
+        <button type="button" onClick={() => send('copy-tab-url')}>
+          Copy Tab URL
+        </button>
+
+        <button type="button" onClick={() => send('copy-tab-markdown')}>
+          Copy Tab Markdown
+        </button>
+      </main>
+
+      <footer>
+        <button type="button" onClick={openOptionsPage}>
+          Options
+        </button>
+      </footer>
     </div>
   )
 }

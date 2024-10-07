@@ -1,6 +1,7 @@
 import logger from '@/common/logger'
 import { onMessage } from 'webext-bridge/content-script'
 import '../styles'
+import './content.css'
 
 let toastTimeout1: NodeJS.Timeout, toastTimeout2: NodeJS.Timeout
 let shadowDOM: ShadowRoot
@@ -32,10 +33,12 @@ export function contentScriptMain() {
 async function injectShadowRoot() {
   const container = document.createElement('div')
   root = document.createElement('div')
-  const styleEl = document.createElement('link')
   shadowDOM = container.attachShadow?.({ mode: __DEV__ ? 'open' : 'closed' }) || container
+
+  const styleEl = document.createElement('link')
   styleEl.setAttribute('rel', 'stylesheet')
   styleEl.setAttribute('href', browser.runtime.getURL('dist/contentScripts/style.css'))
+
   shadowDOM.appendChild(styleEl)
   shadowDOM.appendChild(root)
   document.body.appendChild(container)

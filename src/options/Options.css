@@ -1,40 +1,66 @@
-.App {
-  text-align: center;
+.options {
+  min-height: 100vmin;
+  margin: 4rem auto 0;
+  max-width: 600px;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.App-link {
+.options-link {
   color: #61dafb;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.options-section {
+  margin: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.options-section-title {
+  font-weight: bold;
+  margin: 0;
+}
+
+.options-section-subtitle {
+  font-size: 0.875rem;
+  color: #666;
+  margin: 0;
+}
+
+button {
+  background: #006;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  border: none;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #008;
+}
+
+.custom-buttons-section {
+  gap: 1rem;
+}
+
+.custom-button-item {
+  display: flex;
+  width: 100%;
+  gap: 1rem;
+  border: 1px solid #ccc;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+}
+
+.custom-button-item .custom-button-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.remove-button {
+  margin-top: 1rem;
 }
 
 input {
@@ -42,6 +68,11 @@ input {
   line-height: 1.15;
   transition: border-color calc(var(--transition, 0.2) * 1s) ease;
   outline: transparent;
-  text-align: center;
-  font-size: calc(10px + 2vmin);
+  font-size: 1.125rem;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }

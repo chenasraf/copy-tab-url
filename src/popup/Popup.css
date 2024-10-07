@@ -1,34 +1,37 @@
 html,
 body {
   overflow: hidden;
+  font-size: 16px;
 }
 
-.App {
+.popup {
   width: 300px;
   text-align: center;
+  padding: 0.5em;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.popup-header {
+  font-weight: bold;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.button-group {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  margin: 1rem 0;
 }
 
-.App-link {
-  color: #61dafb;
+.button-group button {
+  display: block;
+  background: transparent;
+  display: flex;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  transition: all 150ms ease-in-out;
 }
 
-button {
-  font-size: calc(10px + 2vmin);
+.button-group button:hover {
+  background: #e6e6e6;
 }
